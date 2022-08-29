@@ -19,6 +19,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 from sklearn import metrics
 from bs4 import BeautifulSoup
+predictor = pickle.load(open("price_predicter.sav", 'rb'))
 
 def Brands():
     cars= pd.read_csv("cars.csv")
@@ -53,11 +54,18 @@ def Years(s):
         lis = tuple(lis)
         return lis
 
-def doors(s):
+def Doors(s):
     if s:
         cars= pd.read_csv("cars.csv")
         lis= cars[cars["car_model"]==s]["car_door"].unique()
         lis.sort()
         lis = tuple(lis)
         return lis
+
+def Price(m,b,d,y,o):
+    dic = {"car_model": m,"car_brand": b,"car_doors": d,
+       "car_year":y, "car_odo":o}
+    df = pd.DataFrame.from_dict(dic)
+    p = predictor.predict(df)
+    return p
 
