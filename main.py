@@ -1,3 +1,4 @@
+from ast import mod
 import streamlit as st
 import numpy as np 
 import pandas as pd 
@@ -21,12 +22,26 @@ from sklearn.metrics import r2_score
 from sklearn import metrics
 from bs4 import BeautifulSoup
 import sc 
-loaded_model = pickle.load(open("price_predicter.sav", 'rb'))
+predictor = pickle.load(open("price_predicter.sav", 'rb'))
 
 brand = st.selectbox(
      'Select car Brand',
      sc.Brands)
 
 model = st.selectbox("Select Model",
-sc.Model(brand)
+sc.Models(brand)
 )
+year = st.selectbox("Select year",sc.Years(model))
+
+doors = st.selectbox("Select amount of doors",sc.doors(model))
+
+odo= st.slider("Select Mileage (km)",0,100000,step=1000)
+
+dic = {"car_model": model,"car_brand": brand,"car_doors": doors,
+       "car_year":year, "car_odo":odo}
+
+df = pd.DataFrame.from_dict(dic)
+price = predictor.predict(df)
+
+st.metric(label="Price", value=price)
+
